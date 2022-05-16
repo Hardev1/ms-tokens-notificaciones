@@ -1,5 +1,5 @@
 from flask import Flask
-import os
+
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from twilio.rest import Client
@@ -90,14 +90,27 @@ def validar():
     try:
         secret_key = os.environ.get("JWT_SECRET_KEY")
         token = jwt.decode(token, secret_key, algorithms=['HS256'])
-        print(token)
+        print(token + '__' + rol)
         if token["rol"] == rol:
+            print('ok')
             return "OK"
         else:
+            print('ko')
             return "KO"
     except Exception as e:
+        print('bad')
         return ""
 
+@app.route("/verificar-token")
+def verificar():
+    token = request.args.get("token")
+    try:
+        secret_key = os.environ.get("JWT_SECRET_KEY")
+        token = jwt.decode(token, secret_key, algorithms=['HS256'])
+        print(token)
+        return "OK"
+    except Exception as e:
+        return "KO"
 
 if __name__ == "__main__":
     app.run()
